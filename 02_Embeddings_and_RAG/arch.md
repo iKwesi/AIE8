@@ -2,7 +2,7 @@
 
 ## Architecture Overview
 
-![Architecture diagram](./images/arch.png)
+![Architecture diagram](images/arch.png)
 
 ## System Enhancement Summary
 
@@ -53,98 +53,7 @@ This enhanced RAG system incorporates 5 major improvements over the basic implem
 
 ## Data Flow Architecture
 
-```mermaid
-flowchart TB
-    %% Input Sources
-    subgraph INPUT ["📥 Input Sources"]
-        direction LR
-        TXT[📄 Text Files<br/>PMarca Blogs]
-        PDF[📕 PDF Documents<br/>Rich Metadata]
-        YT[📺 YouTube Videos<br/>Transcripts]
-    end
-
-    %% Document Processing
-    subgraph PROCESS ["🔄 Document Processing"]
-        direction LR
-        LOAD[Specialized Loaders<br/>TextFile • PDF • YouTube]
-        META[Metadata Extraction<br/>Pages • Timestamps • Categories]
-        SPLIT[Text Chunking<br/>Preserve Structure]
-    end
-
-    %% Middle Row - Embedding and Vector Storage
-    subgraph ROW2 [" "]
-        direction LR
-        subgraph EMBED ["🧠 Embedding Generation"]
-            direction TB
-            MODELS[Multiple Models<br/>3-small • 3-large • ada-002]
-            ASYNC[Async Processing<br/>Batch Operations]
-        end
-        
-        subgraph VECTOR ["🗄️ Enhanced Vector Storage"]
-            direction TB
-            DB[(Vector Database<br/>with Metadata)]
-            METRICS[Multi-Metrics<br/>Cosine • Euclidean • Manhattan]
-        end
-    end
-
-    %% Bottom Row - Query and Response
-    subgraph ROW3 [" "]
-        direction LR
-        subgraph QUERY ["🔍 Query Processing"]
-            direction TB
-            SEARCH[Semantic Search<br/>Distance Metrics]
-            FILTER[Metadata Filtering<br/>Targeted Retrieval]
-        end
-        
-        subgraph RESPONSE ["🤖 Response Generation"]
-            direction TB
-            CONTEXT[Context Assembly<br/>Source Attribution]
-            LLM[LLM Processing<br/>GPT-4o-mini]
-            OUTPUT[Enhanced Response<br/>Citations + Scores]
-        end
-    end
-
-    %% Main Data Flow
-    INPUT --> PROCESS
-    PROCESS --> ROW2
-    ROW2 --> ROW3
-
-    %% Internal Connections
-    TXT --> LOAD
-    PDF --> LOAD
-    YT --> LOAD
-    
-    LOAD --> META
-    META --> SPLIT
-    
-    SPLIT --> MODELS
-    MODELS --> ASYNC
-    
-    ASYNC --> DB
-    DB --> METRICS
-    
-    METRICS --> SEARCH
-    SEARCH --> FILTER
-    
-    FILTER --> CONTEXT
-    CONTEXT --> LLM
-    LLM --> OUTPUT
-
-    %% Styling
-    classDef inputStyle fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000000
-    classDef processStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000000
-    classDef embedStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000000
-    classDef vectorStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000000
-    classDef queryStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000000
-    classDef responseStyle fill:#e0f2f1,stroke:#004d40,stroke-width:2px,color:#000000
-
-    class TXT,PDF,YT,INPUT inputStyle
-    class LOAD,META,SPLIT,PROCESS processStyle
-    class MODELS,ASYNC,EMBED embedStyle
-    class DB,METRICS,VECTOR vectorStyle
-    class SEARCH,FILTER,QUERY queryStyle
-    class CONTEXT,LLM,OUTPUT,RESPONSE responseStyle
-```
+![data-flow-diagram](images/arch2.png)
 
 ## Technical Specifications
 
