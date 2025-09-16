@@ -397,6 +397,11 @@ App Response:
 These adjustments moved the system from a functional prototype toward a production-ready, gold-standard assistant. The vibe checks show measurable improvements in formatting, tone, and overall user experience.
 
 ---
+# The New UI
+
+![image](images/new-UI.png)
+
+---
 ## ❓Question #1:
 What are some limitations of vibe checking as an evaluation tool?
 
