@@ -54,9 +54,10 @@ This enhanced RAG system incorporates 5 major improvements over the basic implem
 ## Data Flow Architecture
 
 ```mermaid
-flowchart LR
+flowchart TB
     %% Input Sources
     subgraph INPUT ["📥 Input Sources"]
+        direction LR
         TXT[📄 Text Files<br/>PMarca Blogs]
         PDF[📕 PDF Documents<br/>Rich Metadata]
         YT[📺 YouTube Videos<br/>Transcripts]
@@ -64,42 +65,49 @@ flowchart LR
 
     %% Document Processing
     subgraph PROCESS ["🔄 Document Processing"]
+        direction LR
         LOAD[Specialized Loaders<br/>TextFile • PDF • YouTube]
         META[Metadata Extraction<br/>Pages • Timestamps • Categories]
         SPLIT[Text Chunking<br/>Preserve Structure]
     end
 
-    %% Embedding Generation
-    subgraph EMBED ["🧠 Embedding Generation"]
-        MODELS[Multiple Models<br/>3-small • 3-large • ada-002]
-        ASYNC[Async Processing<br/>Batch Operations]
+    %% Middle Row - Embedding and Vector Storage
+    subgraph ROW2 [" "]
+        direction LR
+        subgraph EMBED ["🧠 Embedding Generation"]
+            direction TB
+            MODELS[Multiple Models<br/>3-small • 3-large • ada-002]
+            ASYNC[Async Processing<br/>Batch Operations]
+        end
+        
+        subgraph VECTOR ["🗄️ Enhanced Vector Storage"]
+            direction TB
+            DB[(Vector Database<br/>with Metadata)]
+            METRICS[Multi-Metrics<br/>Cosine • Euclidean • Manhattan]
+        end
     end
 
-    %% Vector Storage
-    subgraph VECTOR ["🗄️ Enhanced Vector Storage"]
-        DB[(Vector Database<br/>with Metadata)]
-        METRICS[Multi-Metrics<br/>Cosine • Euclidean • Manhattan]
+    %% Bottom Row - Query and Response
+    subgraph ROW3 [" "]
+        direction LR
+        subgraph QUERY ["🔍 Query Processing"]
+            direction TB
+            SEARCH[Semantic Search<br/>Distance Metrics]
+            FILTER[Metadata Filtering<br/>Targeted Retrieval]
+        end
+        
+        subgraph RESPONSE ["🤖 Response Generation"]
+            direction TB
+            CONTEXT[Context Assembly<br/>Source Attribution]
+            LLM[LLM Processing<br/>GPT-4o-mini]
+            OUTPUT[Enhanced Response<br/>Citations + Scores]
+        end
     end
 
-    %% Query Processing
-    subgraph QUERY ["🔍 Query Processing"]
-        SEARCH[Semantic Search<br/>Distance Metrics]
-        FILTER[Metadata Filtering<br/>Targeted Retrieval]
-    end
-
-    %% Response Generation
-    subgraph RESPONSE ["🤖 Response Generation"]
-        CONTEXT[Context Assembly<br/>Source Attribution]
-        LLM[LLM Processing<br/>GPT-4o-mini]
-        OUTPUT[Enhanced Response<br/>Citations + Scores]
-    end
-
-    %% Data Flow Connections
+    %% Main Data Flow
     INPUT --> PROCESS
-    PROCESS --> EMBED
-    EMBED --> VECTOR
-    VECTOR --> QUERY
-    QUERY --> RESPONSE
+    PROCESS --> ROW2
+    ROW2 --> ROW3
 
     %% Internal Connections
     TXT --> LOAD
