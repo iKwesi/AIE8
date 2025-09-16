@@ -64,21 +64,21 @@ flowchart LR
 
     %% Document Processing
     subgraph PROCESS ["🔄 Document Processing"]
-        LOAD[Specialized Loaders<br/>TextFile | PDF | YouTube]
-        META[Metadata Extraction<br/>Pages | Timestamps | Categories]
+        LOAD[Specialized Loaders<br/>TextFile • PDF • YouTube]
+        META[Metadata Extraction<br/>Pages • Timestamps • Categories]
         SPLIT[Text Chunking<br/>Preserve Structure]
     end
 
     %% Embedding Generation
     subgraph EMBED ["🧠 Embedding Generation"]
-        MODELS[Multiple Models<br/>3-small | 3-large | ada-002]
+        MODELS[Multiple Models<br/>3-small • 3-large • ada-002]
         ASYNC[Async Processing<br/>Batch Operations]
     end
 
     %% Vector Storage
     subgraph VECTOR ["🗄️ Enhanced Vector Storage"]
         DB[(Vector Database<br/>with Metadata)]
-        METRICS[Multi-Metrics<br/>Cosine | Euclidean | Manhattan]
+        METRICS[Multi-Metrics<br/>Cosine • Euclidean • Manhattan]
     end
 
     %% Query Processing
