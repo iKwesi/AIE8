@@ -1,192 +1,66 @@
 # Enhanced RAG System Architecture
 
-## Clean Architecture Overview
+## Architecture Overview
 
-```mermaid
-flowchart LR
-    %% Input Section
-    subgraph INPUT [" "]
-        Q[🔍<br/>What is the Michael<br/>Eisner Memorial Weak<br/>Executive Problem?]
-    end
+![Architecture diagram](./images/arch.png)
 
-    %% OpenAI API Section
-    subgraph API ["OpenAI API"]
-        EM[🧠<br/>Embedding Model<br/>text-embedding-3-small]
-        CM[💬<br/>Chat Model<br/>GPT-4o-mini]
-    end
+## System Enhancement Summary
 
-    %% Prompt Templates Section
-    subgraph PROMPT ["Prompt Templates"]
-        SYS[📝 System Prompt<br/>Use the provided context to answer the user's query.<br/><br/>You may not answer the user's query unless there is specific<br/>context in the following text.<br/><br/>If you do not know the answer, or cannot answer, please respond<br/>with "I don't know".]
-        
-        CTX[📋 Context:<br/>{context}]
-        
-        USER[👤 User Query:<br/>{user_query}]
-    end
+This enhanced RAG system incorporates 5 major improvements over the basic implementation, providing a production-ready solution for multi-modal document processing and intelligent question answering.
 
-    %% Vector Store Section
-    subgraph VECTOR ["Vector Store"]
-        APP1[📱<br/>APP<br/>App Logic]
-        VDB[(🗄️<br/>Vector Database)]
-        APP2[📱<br/>APP<br/>App Logic]
-        
-        SEARCH[🔍 Find Nearest<br/>Neighbours<br/>cosine similarity]
-        RETURN[📤 Return document(s)<br/>from<br/>Nearest Neighbours]
-    end
+### 🎯 **Key Enhancements Implemented**
 
-    %% Output Section
-    subgraph OUTPUT [" "]
-        RESP[🔍<br/><br/>The Michael<br/>Eisner...]
-    end
+#### 1. **📕 PDF Processing**
+- Page-level metadata extraction with source attribution
+- Rich document metadata (title, author, creation date, page numbers)
+- Page-aware chunking that preserves document structure
 
-    %% Connections
-    Q --> EM
-    EM --> |[0.1, 0.4, -0.6, ...]| VECTOR
-    
-    APP1 --> SEARCH
-    SEARCH --> VDB
-    VDB --> RETURN
-    RETURN --> APP2
-    
-    APP2 --> CTX
-    CTX --> CM
-    USER --> CM
-    SYS --> CM
-    
-    CM --> RESP
+#### 2. **📊 Multiple Distance Metrics**
+- **Cosine Similarity** (default) - Best for semantic similarity
+- **Euclidean Distance** - Geometric distance in vector space
+- **Manhattan Distance** - Sum of absolute differences
+- **Dot Product** - Raw vector similarity measure
 
-    %% Styling
-    classDef inputStyle fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,color:#000
-    classDef apiStyle fill:#17a2b8,stroke:#138496,stroke-width:2px,color:#fff
-    classDef promptStyle fill:#ffc107,stroke:#e0a800,stroke-width:2px,color:#000
-    classDef vectorStyle fill:#6f42c1,stroke:#5a32a3,stroke-width:2px,color:#fff
-    classDef outputStyle fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,color:#000
+#### 3. **🏷️ Enhanced Metadata Support**
+- Rich metadata storage and filtering capabilities
+- Category-based document organization
+- Importance level classification
+- Source type tracking and attribution
 
-    class Q,RESP inputStyle
-    class EM,CM apiStyle
-    class SYS,CTX,USER promptStyle
-    class APP1,VDB,APP2,SEARCH,RETURN vectorStyle
-```
+#### 4. **🧠 Multiple Embedding Models**
+- **text-embedding-3-small** (1536D) - Cost-effective, fast processing
+- **text-embedding-3-large** (3072D) - Highest quality, best accuracy
+- **text-embedding-ada-002** (1536D) - Legacy support, reliable baseline
 
-## Enhanced Features Architecture
+#### 5. **📺 YouTube Integration**
+- Transcript extraction from video URLs
+- Timestamp preservation in text chunks
+- Video metadata (title, duration, views, channel info)
 
-```mermaid
-flowchart TB
-    %% Input Sources
-    subgraph SOURCES ["📥 Enhanced Input Sources"]
-        TXT[📄 Text Files<br/>PMarca Blogs]
-        PDF[📕 PDF Documents<br/>Page Attribution]
-        YT[📺 YouTube Videos<br/>Timestamp Metadata]
-    end
+## Enhanced Query Processing
 
-    %% Processing Layer
-    subgraph PROCESS ["🔄 Document Processing"]
-        LOAD[Document Loaders<br/>TextFileLoader | PDFFileLoader | YouTubeLoader]
-        SPLIT[Text Splitters<br/>Character | PDF | YouTube]
-        META[Metadata Extraction<br/>Pages | Timestamps | Categories]
-    end
-
-    %% Embedding Layer
-    subgraph EMBED ["🧠 Multiple Embedding Models"]
-        E1[text-embedding-3-small<br/>1536 dimensions]
-        E2[text-embedding-3-large<br/>3072 dimensions]
-        E3[text-embedding-ada-002<br/>1536 dimensions]
-    end
-
-    %% Enhanced Vector Database
-    subgraph ENHANCED ["🗄️ Enhanced Vector Database"]
-        subgraph METRICS ["📊 Distance Metrics"]
-            COS[Cosine]
-            EUC[Euclidean]
-            MAN[Manhattan]
-            DOT[Dot Product]
-        end
-        
-        VDB[(Vector Database<br/>with Metadata)]
-        
-        FILTER[🎯 Metadata Filtering<br/>Category | Importance | Source]
-    end
-
-    %% RAG Pipeline
-    subgraph RAG ["🤖 Enhanced RAG Pipeline"]
-        QUERY[User Query]
-        SEARCH[Semantic Search<br/>+ Metadata Filtering]
-        CONTEXT[Context Assembly<br/>+ Source Attribution]
-        PROMPT[Enhanced Prompting<br/>System + User Templates]
-        LLM[ChatOpenAI<br/>GPT-4o-mini]
-        RESPONSE[Response + Citations<br/>+ Similarity Scores]
-    end
-
-    %% Data Flow
-    SOURCES --> PROCESS
-    PROCESS --> EMBED
-    EMBED --> ENHANCED
-    ENHANCED --> RAG
-    
-    QUERY --> SEARCH
-    SEARCH --> CONTEXT
-    CONTEXT --> PROMPT
-    PROMPT --> LLM
-    LLM --> RESPONSE
-
-    %% Styling
-    classDef sourceStyle fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-    classDef processStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px
-    classDef embedStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
-    classDef enhancedStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef ragStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px
-
-    class TXT,PDF,YT sourceStyle
-    class LOAD,SPLIT,META processStyle
-    class E1,E2,E3 embedStyle
-    class COS,EUC,MAN,DOT,VDB,FILTER enhancedStyle
-    class QUERY,SEARCH,CONTEXT,PROMPT,LLM,RESPONSE ragStyle
-```
-
-## Key Enhancement Summary
-
-### 🎯 **5 Major Enhancements Implemented**
-
-1. **📕 PDF Processing**
-   - Page-level metadata extraction
-   - Source attribution with page numbers
-   - Rich document metadata (title, author, creation date)
-
-2. **📊 Multiple Distance Metrics**
-   - Cosine Similarity (default)
-   - Euclidean Distance
-   - Manhattan Distance  
-   - Dot Product
-
-3. **🏷️ Enhanced Metadata Support**
-   - Rich metadata storage and filtering
-   - Category-based organization
-   - Importance level classification
-   - Source type tracking
-
-4. **🧠 Multiple Embedding Models**
-   - text-embedding-3-small (1536D, cost-effective)
-   - text-embedding-3-large (3072D, highest quality)
-   - text-embedding-ada-002 (1536D, legacy support)
-
-5. **📺 YouTube Integration**
-   - Transcript extraction from video URLs
-   - Timestamp preservation in chunks
-   - Video metadata (title, duration, views)
-
-### 🔍 **Enhanced Query Processing**
-
-- **Semantic Search**: Multiple distance metrics for better relevance
-- **Metadata Filtering**: Target specific document types or categories
+### 🔍 **Intelligent Retrieval**
+- **Semantic Search**: Multiple distance metrics for optimal relevance
+- **Metadata Filtering**: Target specific document types, categories, or importance levels
 - **Source Attribution**: Full traceability with page numbers and timestamps
 - **Quality Controls**: "I don't know" responses for out-of-domain queries
 
 ### 📊 **Performance & Analytics**
-
-- **Similarity Scoring**: Transparent relevance metrics
-- **Database Statistics**: Performance monitoring and insights
+- **Similarity Scoring**: Transparent relevance metrics for each result
+- **Database Statistics**: Performance monitoring and system insights
 - **Response Analytics**: Context count and source breakdown
 - **Knowledge Boundaries**: Proper handling of irrelevant queries
+
+## Data Flow Architecture
+
+```
+Input Sources → Document Processing → Embedding Generation → Vector Storage → Query Processing → Response Generation
+     ↓                    ↓                    ↓                 ↓               ↓                    ↓
+• Text Files         • Specialized        • Multiple         • Enhanced      • Semantic         • Context-aware
+• PDF Documents        Loaders             Models             Database         Search             LLM responses
+• YouTube Videos     • Metadata          • Async            • Metadata       • Filtering        • Source attribution
+                       Extraction          Processing         Support          • Multi-metrics    • Quality controls
+```
 
 ## Technical Specifications
 
@@ -200,4 +74,21 @@ flowchart TB
 | **LLM Model** | GPT-4o-mini via OpenAI API |
 | **Response Features** | Citations, Similarity Scores, Source Attribution |
 
-This enhanced RAG system provides a production-ready, multi-modal document processing and retrieval solution with comprehensive quality controls and transparency features.
+## Implementation Benefits
+
+### 🚀 **Production Ready**
+- Comprehensive error handling and fallback mechanisms
+- Scalable architecture supporting multiple document types
+- Performance monitoring and analytics capabilities
+
+### 🔍 **Enhanced Accuracy**
+- Multiple embedding models for optimal semantic understanding
+- Advanced distance metrics for better relevance ranking
+- Metadata filtering for targeted, precise retrieval
+
+### 📊 **Full Transparency**
+- Complete source attribution with page numbers and timestamps
+- Similarity scores for result confidence assessment
+- Clear handling of out-of-domain queries
+
+This enhanced RAG system provides a comprehensive, enterprise-ready solution for intelligent document retrieval and question answering with full transparency and quality controls.
