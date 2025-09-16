@@ -53,13 +53,89 @@ This enhanced RAG system incorporates 5 major improvements over the basic implem
 
 ## Data Flow Architecture
 
-```
-Input Sources → Document Processing → Embedding Generation → Vector Storage → Query Processing → Response Generation
-     ↓                    ↓                    ↓                 ↓               ↓                    ↓
-• Text Files         • Specialized        • Multiple         • Enhanced      • Semantic         • Context-aware
-• PDF Documents        Loaders             Models             Database         Search             LLM responses
-• YouTube Videos     • Metadata          • Async            • Metadata       • Filtering        • Source attribution
-                       Extraction          Processing         Support          • Multi-metrics    • Quality controls
+```mermaid
+flowchart LR
+    %% Input Sources
+    subgraph INPUT ["📥 Input Sources"]
+        TXT[📄 Text Files<br/>PMarca Blogs]
+        PDF[📕 PDF Documents<br/>Rich Metadata]
+        YT[📺 YouTube Videos<br/>Transcripts]
+    end
+
+    %% Document Processing
+    subgraph PROCESS ["🔄 Document Processing"]
+        LOAD[Specialized Loaders<br/>TextFile | PDF | YouTube]
+        META[Metadata Extraction<br/>Pages | Timestamps | Categories]
+        SPLIT[Text Chunking<br/>Preserve Structure]
+    end
+
+    %% Embedding Generation
+    subgraph EMBED ["🧠 Embedding Generation"]
+        MODELS[Multiple Models<br/>3-small | 3-large | ada-002]
+        ASYNC[Async Processing<br/>Batch Operations]
+    end
+
+    %% Vector Storage
+    subgraph VECTOR ["🗄️ Enhanced Vector Storage"]
+        DB[(Vector Database<br/>with Metadata)]
+        METRICS[Multi-Metrics<br/>Cosine | Euclidean | Manhattan]
+    end
+
+    %% Query Processing
+    subgraph QUERY ["🔍 Query Processing"]
+        SEARCH[Semantic Search<br/>Distance Metrics]
+        FILTER[Metadata Filtering<br/>Targeted Retrieval]
+    end
+
+    %% Response Generation
+    subgraph RESPONSE ["🤖 Response Generation"]
+        CONTEXT[Context Assembly<br/>Source Attribution]
+        LLM[LLM Processing<br/>GPT-4o-mini]
+        OUTPUT[Enhanced Response<br/>Citations + Scores]
+    end
+
+    %% Data Flow Connections
+    INPUT --> PROCESS
+    PROCESS --> EMBED
+    EMBED --> VECTOR
+    VECTOR --> QUERY
+    QUERY --> RESPONSE
+
+    %% Internal Connections
+    TXT --> LOAD
+    PDF --> LOAD
+    YT --> LOAD
+    
+    LOAD --> META
+    META --> SPLIT
+    
+    SPLIT --> MODELS
+    MODELS --> ASYNC
+    
+    ASYNC --> DB
+    DB --> METRICS
+    
+    METRICS --> SEARCH
+    SEARCH --> FILTER
+    
+    FILTER --> CONTEXT
+    CONTEXT --> LLM
+    LLM --> OUTPUT
+
+    %% Styling
+    classDef inputStyle fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef processStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef embedStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef vectorStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef queryStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef responseStyle fill:#e0f2f1,stroke:#004d40,stroke-width:2px
+
+    class TXT,PDF,YT,INPUT inputStyle
+    class LOAD,META,SPLIT,PROCESS processStyle
+    class MODELS,ASYNC,EMBED embedStyle
+    class DB,METRICS,VECTOR vectorStyle
+    class SEARCH,FILTER,QUERY queryStyle
+    class CONTEXT,LLM,OUTPUT,RESPONSE responseStyle
 ```
 
 ## Technical Specifications
