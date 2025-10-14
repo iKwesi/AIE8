@@ -1,0 +1,29 @@
+**🏆 Best Overall Performer**: Semantic_ContextualCompression with Semantic chunking achieved the highest composite score of 0.995.
+**⚡ Fastest Retriever**: BM25 with Standard chunking had the lowest latency at 3.08 seconds per query.
+**🎯 Most Efficient**: ParentDocument with Standard chunking provided the best performance-to-latency ratio with an efficiency score of 0.321.
+**💎 Highest Quality**: ParentDocument with Standard chunking achieved the best quality score of 0.995 (composite score × success rate).
+
+**🧠 Semantic Chunking Analysis**:
+- **Performance Impact**: Semantic chunking improved performance by 5.2% on average
+- **Latency Impact**: 28.7% average change in response time
+- **Reliability Impact**: 0.0% average change in success rate
+
+**📊 Performance Insights**:
+- **Total Evaluations**: 0 individual query evaluations completed
+- **Average Query Time**: nan seconds across all retrievers
+- **Performance Range**: 3.06s to 8.50s
+
+**💰 Cost Analysis**: Available in LangSmith dashboard
+
+**🎯 Use Case Recommendations**:
+- **Speed-Critical Applications**: Choose the fastest retriever for real-time systems
+- **Maximum Accuracy**: Use the best overall performer for highest quality results
+- **Balanced Performance**: Select the most efficient retriever for optimal cost-performance ratio
+- **High Reliability**: Choose the highest quality scorer for mission-critical applications
+- **Cost-Sensitive Applications**: Consider simpler retrievers like BM25 for budget constraints
+
+**🔍 LangSmith Insights**:
+- **Complete Traceability**: All evaluations are fully traced in LangSmith dashboard
+- **Cost Monitoring**: Real-time cost tracking available in LangSmith
+- **Performance Analytics**: Detailed latency and token usage analytics available
+- **Debugging Support**: Full error traces and context available for troubleshooting
