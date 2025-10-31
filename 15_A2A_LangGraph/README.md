@@ -88,6 +88,63 @@ What are the core components of an `AgentCard`?
 
 ##### ✅ Answer:
 
+Based on my analysis of the codebase, here's the answer to **Question #1: What are the core components of an `AgentCard`?**
+
+## Core Components of an AgentCard
+
+An `AgentCard` is a metadata structure that describes an agent's capabilities and identity in the A2A protocol. From the implementation in `app/__main__.py`, the core components are:
+
+### 1. **Basic Identity**
+- **name**: The agent's display name (e.g., "General Purpose Agent")
+- **description**: A clear description of what the agent does
+- **url**: The agent's endpoint URL (e.g., `http://localhost:10000/`)
+- **version**: Semantic version of the agent (e.g., "1.0.0")
+
+### 2. **Input/Output Modes**
+- **default_input_modes**: List of supported input content types (e.g., `['text', 'text/plain']`)
+- **default_output_modes**: List of supported output content types (e.g., `['text', 'text/plain']`)
+
+### 3. **Capabilities**
+An `AgentCapabilities` object that defines what the agent can do:
+- **streaming**: Boolean indicating if the agent supports streaming responses
+- **push_notifications**: Boolean indicating if the agent supports push notifications
+
+### 4. **Skills**
+A list of `AgentSkill` objects, where each skill includes:
+- **id**: Unique identifier for the skill (e.g., "web_search")
+- **name**: Human-readable skill name (e.g., "Web Search Tool")
+- **description**: What the skill does
+- **tags**: List of relevant tags for categorization (e.g., `['search', 'web', 'internet']`)
+- **examples**: List of example queries that would use this skill (e.g., `['What are the latest news about AI?']`)
+
+### Example from the Codebase:
+
+```python
+agent_card = AgentCard(
+    name='General Purpose Agent',
+    description='A helpful AI assistant with web search, academic paper search, and document retrieval capabilities',
+    url=f'http://{host}:{port}/',
+    version='1.0.0',
+    default_input_modes=Agent.SUPPORTED_CONTENT_TYPES,  # ['text', 'text/plain']
+    default_output_modes=Agent.SUPPORTED_CONTENT_TYPES,
+    capabilities=AgentCapabilities(
+        streaming=True, 
+        push_notifications=True
+    ),
+    skills=[
+        AgentSkill(
+            id='web_search',
+            name='Web Search Tool',
+            description='Search the web for current information',
+            tags=['search', 'web', 'internet'],
+            examples=['What are the latest news about AI?']
+        ),
+    ]
+)
+```
+
+This AgentCard serves as the "business card" that other agents or clients use to understand what this agent can do and how to interact with it.
+
 <br />
 
 ### ❓ Question #2:
@@ -95,6 +152,51 @@ What are the core components of an `AgentCard`?
 Why is A2A (and other such protocols) important in your own words?
 
 ##### ✅ Answer:
+
+As the number of autonomous AI agents grows, seamless communication between them becomes critical. Without a shared language or standard, collaboration would require custom integrations for every agent pair—an unscalable and error-prone approach. The A2A (Agent-to-Agent) protocol solves this by providing a universal framework for agent interaction, coordination, and evaluation.
+The A2A (Agent-to-Agent) protocol is important for several fundamental reasons:
+You're absolutely right - I apologize for misunderstanding. Let me take my original answer and simply add security and trust to it:
+
+### 1. **Standardized Agent Communication**
+Just like HTTP standardized how web servers communicate, A2A standardizes how AI agents interact with each other. Without a common protocol, every agent would need custom integration code to talk to every other agent - an unsustainable approach as the number of agents grows.
+
+### 2. **Composability and Specialization**
+A2A enables a "microservices" approach to AI agents. Instead of building one massive agent that tries to do everything, you can:
+- Build specialized agents that excel at specific tasks
+- Compose them together to solve complex problems
+- Replace or upgrade individual agents without breaking the entire system
+
+### 3. **Quality Assurance Through Evaluation**
+The helpfulness evaluation loop in this implementation demonstrates a key A2A benefit: **agents can evaluate each other's work**. This creates:
+- Self-improving systems that iteratively refine responses
+- Quality gates that prevent poor responses from reaching users
+- Transparent decision-making about when a task is "complete"
+
+### 4. **Interoperability Across Ecosystems**
+A2A allows agents built with different frameworks (LangGraph, CrewAI, AutoGen, etc.) to work together seamlessly. This prevents vendor lock-in and enables:
+- Best-of-breed tool selection
+- Cross-organization collaboration
+- Easier migration and experimentation
+
+### 5. **Security and Trust**
+A2A protocols establish critical security boundaries through:
+- **Authentication mechanisms** (like the Bearer token for extended agent cards)
+- **Explicit capability declarations** via AgentCards that define what agents can and cannot do
+- **Traceable interactions** through message/task/context IDs for auditing. everything is logged.
+- **Controlled access** to sensitive data and tools
+This makes agent behavior observable, verifiable, and safe for production deployment.
+
+### 6. **Scalability and Distributed Intelligence**
+With A2A, you can:
+- Distribute workload across multiple specialized agents
+- Scale horizontally by adding more agent instances
+- Create agent networks where agents delegate to each other based on expertise
+
+### 7. **Human-Agent and Agent-Agent Symmetry**
+The same protocol that enables agent-to-agent communication can be used for human-to-agent interaction. This creates a unified interface where:
+- Humans can interact with agents the same way agents interact with each other
+- Agents can be swapped in/out of workflows transparently
+- The system remains flexible and extensible
 
 <br /><br />
 
