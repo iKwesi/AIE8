@@ -1,0 +1,8 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "server_agent": "./app/studio_graphs.py:build_server_agent_for_studio",
+    "client_agent": "./app/studio_graphs.py:build_client_agent_for_studio"
+  },
+  "env": ".env"
+}

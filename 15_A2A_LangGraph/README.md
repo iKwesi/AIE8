@@ -61,18 +61,35 @@ Complete the following tasks to understand A2A protocol implementation:
 
 ## 🚀 Quick Start
 
+### Using Make (Recommended)
+
+```bash
+# See all available commands
+make help
+
+# Install dependencies
+make install
+
+# Terminal 1: Start the A2A server
+make server
+
+# Terminal 2: Start LangGraph Studio (optional)
+make studio
+
+# Terminal 3: Run tests
+make test-client
+```
+
+### Using UV Directly
+
 ```bash
 # Setup and run
 ./quickstart.sh
-```
 
-```bash
-# Start LangGraph server
+# Start A2A server
 uv run python -m app
-```
 
-```bash
-# Test the A2A Serer
+# Test the A2A Server
 uv run python app/test_client.py
 ```
 
@@ -80,7 +97,48 @@ uv run python app/test_client.py
 
 Build a LangGraph Graph to "use" your application.
 
-Do this by creating a Simple Agent that can make API calls to the 🤖Agent Node above through the A2A protocol. 
+Do this by creating a Simple Agent that can make API calls to the 🤖Agent Node above through the A2A protocol.
+
+#### ✅ Solution: Client Agent Implementation
+
+I've built a **LangGraph client agent** that demonstrates A2A protocol in action! 
+
+**Files Created:**
+- `app/a2a_tool.py` - LangChain tool that calls the A2A server
+- `app/client_agent.py` - LangGraph client agent implementation  
+- `app/test_client_agent.py` - Comprehensive test suite
+- `run_client_demo.py` - Interactive demo script
+- `CLIENT_AGENT_README.md` - Complete documentation
+
+**Quick Start:**
+
+```bash
+# Terminal 1: Start the A2A server
+uv run python -m app
+
+# Terminal 2: Run the client agent tests
+uv run python app/test_client_agent.py
+
+# OR: Run interactive demo
+uv run python run_client_demo.py
+```
+
+**What It Does:**
+
+The client agent is a simple LangGraph agent with ONE tool: `call_a2a_agent`. This tool:
+1. Connects to the A2A server at `http://localhost:10000`
+2. Fetches the server's AgentCard (capabilities metadata)
+3. Sends queries via A2A protocol
+4. Returns the server's response
+
+**Architecture:**
+```
+User Query → Client Agent → A2A Tool → Server Agent (Tavily/ArXiv/RAG) → Response
+```
+
+This demonstrates the core A2A concept: **agents using other agents as tools** rather than having all capabilities built-in.
+
+**See [CLIENT_AGENT_README.md](./CLIENT_AGENT_README.md) for complete documentation.**
 
 ### ❓ Question #1:
 
@@ -210,6 +268,43 @@ Do this by creating a Simple Agent that acts as different personas with differen
 Example:
 
 "You are an expert in Machine Learning, and you want to learn about what makes Kimi K2 so incredible. You are not satisfied with surface level answers, and you wish to have sources you can read to verify information."
+
+---
+
+### ✅ Solution: CrewAI Persona-Based Agents
+
+I've built **4 persona-based agents using CrewAI** that demonstrate cross-framework A2A communication!
+
+**Files Created:**
+- `app/persona_agents.py` - 4 CrewAI agents with distinct personalities
+- `app/test_persona_agents.py` - Interactive test script
+- `PERSONA_AGENTS_README.md` - Complete documentation
+
+**The Four Personas:**
+
+1. 🔬 **Dr. Elena Kovács** - Skeptical ML Researcher (demands sources & benchmarks)
+2. 🎓 **Marcus Chen** - Curious AI Student (wants simple explanations)
+3. 💻 **Dr. Priya Sharma** - Senior AI Architect (analyzes system design)
+4. 💼 **James Mensah** - AI Business Strategist (evaluates ROI & business value)
+
+**Quick Start:**
+
+```bash
+# Terminal 1: Start the A2A server
+make server
+
+# Terminal 2: Run persona agents
+make test-personas
+```
+
+**What It Demonstrates:**
+- ✅ Different agent framework (CrewAI) using A2A protocol
+- ✅ 4 distinct personas with unique goals and personalities
+- ✅ Autonomous follow-up questions based on persona satisfaction
+- ✅ Cross-framework interoperability via A2A
+
+**See [PERSONA_AGENTS_README.md](./PERSONA_AGENTS_README.md) for complete documentation.**
+
 </details>
 
 ## 📁 Implementation Details
