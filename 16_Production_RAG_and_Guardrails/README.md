@@ -22,7 +22,7 @@ Run the notebook and complete the following:
 2. 🤝 BREAKOUT ROOM #2:
   - Task 4: Guardrails Integration for Production Safety
 
-## Guard Rails Set-up
+## Setup
 
 ### 1. Install Dependencies
 
@@ -30,7 +30,28 @@ Run the notebook and complete the following:
 uv sync
 ```
 
-### 2. Configure Guardrails API
+### 2. (Optional) Configure Environment Variables
+
+To avoid re-entering API keys every time you run the notebook, you can create a `.env` file:
+
+```bash
+# Copy the example file
+cp .env.example .env
+
+# Edit .env and add your API keys
+# OPENAI_API_KEY=your_key_here
+# TAVILY_API_KEY=your_key_here
+# LANGCHAIN_API_KEY=your_key_here
+# GUARDRAILS_API_KEY=your_key_here
+```
+
+The notebook will automatically load keys from `.env` if available, otherwise it will prompt you to enter them.
+
+**Note:** The `.env` file is already in `.gitignore` and will not be committed to git.
+
+## Guardrails Setup
+
+### 1. Configure Guardrails API
 
 **⚠️ Note:** The `guardrails configure` CLI command has a bug in version 0.5.14. Use the workaround script instead:
 

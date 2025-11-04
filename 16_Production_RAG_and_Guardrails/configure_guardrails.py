@@ -9,11 +9,22 @@ Usage:
 Or set the API key via environment variable:
     export GUARDRAILS_API_KEY=your_api_key_here
     uv run python configure_guardrails.py
+
+Or use .env file:
+    Add GUARDRAILS_API_KEY=your_key to .env file
+    uv run python configure_guardrails.py
 """
 
 import os
 import sys
 from pathlib import Path
+
+# NEW: Load .env file if it exists
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # dotenv not installed, that's okay
 
 
 def get_config_path() -> Path:
