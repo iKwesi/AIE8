@@ -9,6 +9,7 @@ from .rag import ProductionRAGChain
 from .models import get_openai_model
 from .config import get_api_key, setup_api_keys
 from .agent_with_helpfulness import build_graph
+from .guarded_agent import create_guarded_agent
 
 __version__ = "0.1.0"
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "get_api_key",
     "setup_api_keys",
     "build_graph",
+    "create_guarded_agent",
 ]

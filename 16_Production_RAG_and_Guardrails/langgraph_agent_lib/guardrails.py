@@ -43,7 +43,8 @@ def create_guardrails_guard(
     enable_pii_protection: bool = True,
     enable_profanity_check: bool = True,
     enable_competitor_check: bool = False,
-    pii_entities: Optional[List[str]] = None
+    pii_entities: Optional[List[str]] = None,
+    on_fail: str = "exception"
 ) -> Guard:
     """Create a Guardrails guard with common production safety checks.
     
@@ -55,6 +56,8 @@ def create_guardrails_guard(
         enable_profanity_check: Whether to enable profanity filtering. Default: True.
         enable_competitor_check: Whether to enable competitor mention detection. Default: False.
         pii_entities: List of PII entity types to detect. Default: Common PII types.
+        on_fail: Action to take on validation failure. Options: "exception", "noop", "fix".
+                Default: "exception".
         
     Returns:
         Configured Guard instance.
@@ -73,24 +76,24 @@ def create_guardrails_guard(
                     invalid_topics=invalid_topics or [],
                     disable_classifier=True,
                     disable_llm=False,
-                    on_fail="exception"
+                    on_fail="exception"  # Strict validation
                 )
             )
-            logger.debug("Topic restriction guard configured")
+            logger.debug("Topic restriction guard configured (strict mode)")
         
         # Jailbreak detection
         if enable_jailbreak_detection:
-            guard = guard.use(DetectJailbreak())
-            logger.debug("Jailbreak detection guard configured")
+            guard = guard.use(DetectJailbreak(on_fail="exception"))  # Strict validation
+            logger.debug("Jailbreak detection guard configured (strict mode)")
         
-        # PII protection
+        # PII protection (block PII)
         if enable_pii_protection:
             default_entities = ["CREDIT_CARD", "SSN", "PHONE_NUMBER", "EMAIL_ADDRESS"]
             entities = pii_entities or default_entities
             guard = guard.use(
                 GuardrailsPII(
                     entities=entities,
-                    on_fail="fix"
+                    on_fail="exception"  # Block PII
                 )
             )
             logger.debug(f"PII protection guard configured for entities: {entities}")
@@ -101,10 +104,10 @@ def create_guardrails_guard(
                 ProfanityFree(
                     threshold=0.8,
                     validation_method="sentence",
-                    on_fail="exception"
+                    on_fail="exception"  # Strict validation
                 )
             )
-            logger.debug("Profanity check guard configured")
+            logger.debug("Profanity check guard configured (strict mode)")
         
         # Competitor check (optional)
         if enable_competitor_check:
@@ -178,16 +181,27 @@ def validate_input(
     try:
         result = guard.validate(user_input)
         
+        # Extract error message from validation result
+        error_msg = None
+        if not result.validation_passed:
+            # Try to get error from validation result
+            if hasattr(result, 'error') and result.error:
+                error_msg = str(result.error)
+            elif hasattr(result, 'validation_logs') and result.validation_logs:
+                # Extract from validation logs
+                error_msg = str(result.validation_logs)
+            else:
+                error_msg = "Validation failed"
+        
         validation_result = {
             "validation_passed": result.validation_passed,
             "validated_output": result.validated_output if hasattr(result, 'validated_output') else user_input,
-            "error": None
+            "error": error_msg
         }
         
         if not result.validation_passed and raise_on_failure:
-            error_msg = f"Input validation failed: {getattr(result, 'error', 'Unknown error')}"
             logger.warning(f"Input validation failed: {user_input[:100]}...")
-            raise RuntimeError(error_msg)
+            raise RuntimeError(f"Input validation failed: {error_msg}")
         
         return validation_result
         
@@ -208,6 +222,7 @@ def validate_output(
     guard: Guard,
     agent_response: str,
     context: Optional[str] = None,
+    metadata: Optional[Dict[str, Any]] = None,
     raise_on_failure: bool = True
 ) -> Dict[str, Any]:
     """Validate agent output using a Guardrails guard.
@@ -215,7 +230,8 @@ def validate_output(
     Args:
         guard: The Guard instance to use for validation.
         agent_response: The agent's response to validate.
-        context: Optional context for factuality checking.
+        context: Optional context for factuality checking (deprecated, use metadata).
+        metadata: Optional metadata dict for validation (e.g., {"original_prompt": "...", "context": "..."}).
         raise_on_failure: Whether to raise an exception on validation failure.
             If False, returns validation result. Default: True.
         
@@ -226,8 +242,10 @@ def validate_output(
         RuntimeError: If validation fails and raise_on_failure is True.
     """
     try:
-        # For factuality guards, include context if provided
-        if context:
+        # Use metadata if provided, otherwise fall back to context for backward compatibility
+        if metadata:
+            result = guard.validate(agent_response, metadata=metadata)
+        elif context:
             result = guard.validate(agent_response, metadata={"context": context})
         else:
             result = guard.validate(agent_response)
@@ -341,4 +359,3 @@ def create_guardrails_node(
         return {"validation_results": validation_results}
     
     return guardrails_node
-
